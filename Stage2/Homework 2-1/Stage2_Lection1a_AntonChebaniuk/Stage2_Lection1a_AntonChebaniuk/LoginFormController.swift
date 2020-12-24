@@ -20,32 +20,32 @@ class LoginFormController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapOnScroll))
-        scrollPage.addGestureRecognizer(tapGesture)
-        scrollPage.isUserInteractionEnabled = true
-
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    @objc func keyboardWillShow(notification: Notification) {
-        guard let kbsize = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: kbsize.size.height, right: 0)
-        scrollPage.contentInset = insets
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        let checkresult = checkUserData()
+        if !checkresult {
+            showLoginError()
+        }
+        return checkresult
     }
     
-    @objc func keyboardWillHide(notification: Notification) {
-        let insets = UIEdgeInsets.zero
-        scrollPage.contentInset = insets
+    func checkUserData() -> Bool {
+        guard let email = emailField.text, let password = passwordField.text else { return false }
+        if email == "1" && password == "1" {
+            return true
+        } else { return false }
     }
     
-    @objc func didTapOnScroll() {
-        view.resignFirstResponder()
+    func showLoginError() {
+        let alter = UIAlertController(title: "Error", message: "Input credential are incorrect", preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alter.addAction(action)
+        present(alter, animated: true, completion: nil)
     }
     
     @IBAction func login(_ sender: UIButton) {
-        header.text = "Wrong Email or Password"
-        emailField.layer.borderColor = UIColor.red.cgColor
+        
     }
     
 
